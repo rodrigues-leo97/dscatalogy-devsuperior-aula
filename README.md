@@ -84,7 +84,114 @@ List<Category> list = new ArrayList<>(); -> neste caso é o ArrayList
 # Resultado POSTMAN
 	
   ![image](https://user-images.githubusercontent.com/71105466/168933352-185e27e9-8db6-4188-a844-30dda62861fa.png)
+	
+	
+# CRUD
+	
+- Create
+	
+- Retrieve
+	
+- Update
+	
+- Delete
+	
 
+# INTEGRANDO COM BANCO H2
+	
+- Colar no POM.XML as dependências abaixo
+	
+```
+	
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>com.h2database</groupId>
+	<artifactId>h2</artifactId>
+	<scope>runtime</scope>
+</dependency>
+
+<dependency>
+	<groupId>org.postgresql</groupId>
+	<artifactId>postgresql</artifactId>
+	<scope>runtime</scope>
+</dependency>
+
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+	
+ ```
+	
+# DECORADORES
+
+- @Entity -> transforma a classe em uma entidade, para saber que tem conexão com a base de dados
+
+- @Table -> para especificar a tabela da base de dados que irá se conectar
+	
+- @Id -> para dizer que o atributo será o identificador da classe
+
+- @GeneratedValue(strategy = GenerationType.IDENTITY) -> para dizer que esse Id terá que ser um autoincremento
+	
+# REPOSITORIES (ACESSO Á DADOS)
+	
+![image](https://user-images.githubusercontent.com/71105466/168936044-f7d11696-7688-4d04-b7ba-e7466a9b15d0.png)
 
 	
+- Terei a camada do CONTROLADOR, que terá acesso a camada de DTO, que irá conversar com a camada de SERVIÇO
+
+- A camada de SERVIÇO irá conversar com a camada de ACESSO A DADOS
+	
+- OBS: o SERVIÇO e ACESSO A DADOS tem acesso a camada de ENTIDADES, conforme mostra a imagem ácima
+	
+- DTO: objetos auxiliares para tráfegar os dados
+	
+## COMEÇANDO PELA CAMADA DE ACESSO A DADOS
+	
+- com.devsuperior.dscatalog.repositories.CategoryRepository
+	
+- Será uma INTERFACE
+	
+- ela da um EXTENDS de JpaRepository<T, ID>
+	
+![image](https://user-images.githubusercontent.com/71105466/168937448-1d77b9aa-a714-4f89-9cf9-a7c0154b7f4e.png)
+
+- Só com o JPA já da para usar todas as operações de banco relacional para Postgre, Oracle, h2, SQL e etc...
+	
+
+# CAMADA DE SERVIÇO
+	
+- com.devsuperior.dscatalog.services.CategoryService
+	
+- Camada que irá chamar alguma funcionalidade da camada de ÁCESSO A DADOS
+
+- @Service -> serve para dizer que é uma camada de SERVIÇO, um componente que vai participar do sistema de injeção de dependências automatizado so SPRING
+
+- Ou seja, quem vai gerenciar as instâncias das dependências dos OBJETOS do tipo da classe será o SPRING
+	
+- Para que eu consiga ter acesso a camada de ACESSO A DADOS eu tenho que ter uma instância da classe Repository desejada
+	
+![image](https://user-images.githubusercontent.com/71105466/168937533-ae17df01-a1d9-4172-8f88-257684628afc.png)
+	
+- @AUTOWIRED: Serve para injetar AUTOMATICAMENTE uma instância gerenciada pelo SPRING
+	
+- Após isso ir na classe CAtegoryResource (que é o controlador)
+	
+- Tirar a lista mocada de lá, instanciar a classe de Serviço 
+	
+![image](https://user-images.githubusercontent.com/71105466/168938376-117e851e-15e1-4134-982c-7e2b249dd0a1.png)
 
