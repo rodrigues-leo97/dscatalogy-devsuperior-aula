@@ -194,4 +194,25 @@ List<Category> list = new ArrayList<>(); -> neste caso é o ArrayList
 - Tirar a lista mocada de lá, instanciar a classe de Serviço 
 	
 ![image](https://user-images.githubusercontent.com/71105466/168938376-117e851e-15e1-4134-982c-7e2b249dd0a1.png)
+	
+# APPLICATION.PROPERTIES
+	
+```
+spring.profiles.active=test
+
+spring.jpa.open-in-view=false
+	
+```
+	
+# APPLICATION.PROPERTIES
+	
+```
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.username=sa
+spring.datasource.password=
+
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console	
+	
+```	
 
