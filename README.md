@@ -238,4 +238,56 @@ Resumo: Quando se tem o 'spring.jpa.open-in-view=false' setado pra false e usamo
 	
 ![image](https://user-images.githubusercontent.com/71105466/169424432-b0bd040f-f2d2-4adb-bcb0-367356a44aaf.png)
 
+# DTO
+	
+- Data Transfer Object
+- O Controlador não vai ter acesso direto a camada de serviço, ele vai receber os dados por meio do DTO, como mostra a imagem abaixo: 
+	
+![image](https://user-images.githubusercontent.com/71105466/169431543-589949bb-23f1-4215-a330-f93d35915ed0.png)
+	
+- É um objeto somente para carregar os dados
+	
+- Podemos controlar quais dados iremos mandar para a CONTROLLER, ou seja, menos informações passando de um lado para o outro
+	
+- A arquitetura não tem haver com segurança, porém, se vc usar o DTO para não transmitir dados SENSÍVEIS como senhas e etc.. isso automaticamente passa a ser uma medida de segurança da sua aplicação.
+
+- Criando a classe DTO
+
+import com.devsuperior.dscatalog.entities.Category.CategoryDTO;
+	
+![image](https://user-images.githubusercontent.com/71105466/169432487-c88141c3-d8f6-476f-8337-b6e7a3f5fb07.png)
+
+- O Construtor com a ENTITY como argumento está ai para que povoe pra mim o CategoryDTO simplesmente ao passar a entidade como argumento
+	
+- O método findAll() na CategoryService não irá mais retornar o Category, mas sim o CategoryDTO
+	
+- Para isso precisa mudar o tipo de retorno da função e converter os dados, e tem 3 formas de fazer:
+	
+![image](https://user-images.githubusercontent.com/71105466/169433600-10f9e4a1-0d25-4697-bab1-0ce677071b17.png)
+	
+![image](https://user-images.githubusercontent.com/71105466/169434276-50efe2f2-f8ce-4484-b43a-50049cf50110.png)
+	
+![image](https://user-images.githubusercontent.com/71105466/169434316-3977d685-fa03-43a6-aaf3-dff52b550481.png)
+	
+# EXPRESSÂO LAMBDA EXPLICADA
+	
+List<CategoryDTO> listDTO = list.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
+	
+- stream() -> serve para converter a coleção normal(no caso a lista) para uma stream.
+	
+- Recurso do Java 8 em diante, que permite vc trabalhar com funções de alta ordem, lambda. Recurso de PROGRAMAÇÃO FUNCIONAL
+	
+- Possibilidade de fazer transformações na coleção
+	
+- map() -> transforma cada elemento original em alguma outra coisa: map(x -> new CategoryDTO(x)) --> é igual ao map do JAVASCRIPT
+
+- Também da para usar MAP, FILTER E REDUCE
+	
+- map(x -> new CategoryDTO(x)) -> para cada elemento X(retorno do meu objeto) eu vou levar ele para outro elemento, no caso, new CategoryDTO e aplicando o retorno dele(X)
+	
+- o resultado desse retorno será uma STREAM, portanto, preciso converter de volta para o tipo LIST que é o valor da minha variável
+	
+- Aplico então o collect(Collectors.toList()); --> se encarrega de transformar novamente para algo do tipo LIST
+
+
 
