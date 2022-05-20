@@ -203,8 +203,10 @@ spring.profiles.active=test
 spring.jpa.open-in-view=false
 	
 ```
+
+- spring.jpa.open-in-view=false: para garantir que ao chegar na camada CONTROLLER as transações do banco de dados sejam encerradas e apenas mantenha os dados necessários que foi pedido na requisição e enviado a CONTROLLER
 	
-# APPLICATION.PROPERTIES
+# application-test.properties
 	
 ```
 spring.datasource.url=jdbc:h2:mem:testdb
@@ -215,4 +217,25 @@ spring.h2.console.enabled=true
 spring.h2.console.path=/h2-console	
 	
 ```	
+	
+- O Apllication.properties tem as configurações do meu projeto, porém, configs para todos os perfis
+- PERFIL: usamos perfils diferentes, teste(feature/h2), homologação(release/hml) e produção(master...)
+	
+# TRANSACTIONAL	
+	
+![image](https://user-images.githubusercontent.com/71105466/169423980-e6bafc4d-d4c1-4912-835d-4a6dab228175.png)
+
+
+- Serve para garantir a integridade da transação
+- O próprio FrameWork envolve o método ao identificar que tem o @Transactional e garante o envolvimento em uma transação com o Banco de Dados (ou faz tudo ou não faz nada)
+	
+- No caso como é uma transação somente de LEITURA, para verificar a lista se coloca o readOnly = true, para ficar somente como leitura
+- Evita que faça o locking/travar o banco de dados, pois é só leitura
+	
+![image](https://user-images.githubusercontent.com/71105466/169424212-5c15f2c2-48ef-4e3f-bdbf-9f8fd59661e6.png)
+
+Resumo: Quando se tem o 'spring.jpa.open-in-view=false' setado pra false e usamos o @Transactional garantimos que tudo seja resolvido na camada de Serviço, e APENAS envia os dados necessários para a requisição pedida para a CONTROLLER, conforme imagem abaixo:
+	
+![image](https://user-images.githubusercontent.com/71105466/169424432-b0bd040f-f2d2-4adb-bcb0-367356a44aaf.png)
+
 
