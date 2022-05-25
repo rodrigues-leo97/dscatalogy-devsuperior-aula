@@ -270,6 +270,7 @@ import com.devsuperior.dscatalog.entities.Category.CategoryDTO;
 ![image](https://user-images.githubusercontent.com/71105466/169434316-3977d685-fa03-43a6-aaf3-dff52b550481.png)
 	
 # EXPRESSÂO LAMBDA EXPLICADA
+## findAll
 	
 List<CategoryDTO> listDTO = list.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
 	
@@ -288,6 +289,29 @@ List<CategoryDTO> listDTO = list.stream().map(x -> new CategoryDTO(x)).collect(C
 - o resultado desse retorno será uma STREAM, portanto, preciso converter de volta para o tipo LIST que é o valor da minha variável
 	
 - Aplico então o collect(Collectors.toList()); --> se encarrega de transformar novamente para algo do tipo LIST
+	
+#findById
+	
+- Criando o método para chamar por id
+	
+- Começamos pela controller, o método é bem parecido com o anterior, porém, não irá retornar uma lista, mas sim um único elemento
 
+![image](https://user-images.githubusercontent.com/71105466/170164173-d1044044-c9c4-4681-b7d0-67a42911dd13.png)
 
+- O decorador @GetMapping(value = "/{id}") funciona basicamente como um binding, estou informando com as { } que o id será adquirido dinamicamente
+	
+- Criando o método eu uso o decorador @PathVariable, para que ele saiba que o {id} da URL será passado como parâmetro da minha função
+	
+- Crio na classe SERVICE o método findById
 
+![image](https://user-images.githubusercontent.com/71105466/170164487-66a000e7-e291-417e-9937-07564d87377c.png)
+
+- Eu crio uma variável do tipo OPTIONAL, por sinal facilita em algumas buscas e faz com que não precisemos trabalhar com null
+	
+- Acesso a repository e uso o próprio método da JPA findById 
+	
+- .get() é usado para que eu consiga adquirir somente o OBJETO que está dentro do OPTIONAL, pois minha função é do tipo CategoryDTO
+	
+- Se não usar o get() irá dar erro na hora de fazer o retorno da função pois não podemos retornar o tipo OPTIONAL, mas sim o tipo CategoryDTO
+	
+- instancio no retorno um CategoryDTO passando o a váriavel que armazena o retorno do método findById e já convertendo pra DTO
