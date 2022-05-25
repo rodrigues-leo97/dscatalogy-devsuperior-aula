@@ -315,3 +315,6 @@ List<CategoryDTO> listDTO = list.stream().map(x -> new CategoryDTO(x)).collect(C
 - Se não usar o get() irá dar erro na hora de fazer o retorno da função pois não podemos retornar o tipo OPTIONAL, mas sim o tipo CategoryDTO
 	
 - instancio no retorno um CategoryDTO passando o a váriavel que armazena o retorno do método findById e já convertendo pra DTO
+	
+	
+# TRATAMENTO DE EXCEÇÃO
