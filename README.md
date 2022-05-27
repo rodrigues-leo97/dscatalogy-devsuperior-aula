@@ -318,3 +318,55 @@ List<CategoryDTO> listDTO = list.stream().map(x -> new CategoryDTO(x)).collect(C
 	
 	
 # TRATAMENTO DE EXCEÇÃO
+	
+## EntityNotFound
+	
+- criar um subpacote em services.exceptions.EntityNotFound.java
+	
+- a classe irá extender de RunTimeException ou de Exception
+
+- RunTimeException: Neste caso a exceção pode OU NÃO ser tratada
+	
+- Exception: quando se usa esse no extends estou informando que uma exceção tem que ser OBRIGATORIAMENTE tratada
+	
+![image](https://user-images.githubusercontent.com/71105466/170604594-2ff9255e-eab2-4a99-86be-c0ddead52b88.png)
+	
+	
+- Na classe SERVICE iremos alterar o método findByID, para que seja tratada a exceção que pode vir nele
+	
+- No caso a exceção será para quando a pessoa digitar um id que não existe, ai precisaremos tratar
+	
+- orElseThrow(): permite definir uma chamada de exceção, no caso uma expressão lambda, pois não irá receber argumento nenhum
+	
+- Se o Category não existir ele entra na EXCEPTION
+	
+- OBS: a diferença entre parametro e argumento
+
+- PARAM: é quando vc está criando o método e informando oq ele irá receber de PARÂMETRO
+	
+- ARGUMENTO: é quando vc está chamando o método que já FOI criado e passando os valores que ele irá receber, neste caso se chama argumento
+	
+![image](https://user-images.githubusercontent.com/71105466/170604982-1cab8e12-035a-4eb8-af67-39cb16b74619.png)
+	
+- uso o orElseThrow e instancio uma nova EXCEPTION, no caso, a classe criada anteriormente EntityNotFound, conforme mostra a imagem acima
+	
+- Desta forma ele lança a EXCEPTION na API, mas ainda não aparece na tela o retorno dela
+	
+- O próximo passo agora é não permitir que estoure o ERRO 500 no retorno da request no postman, e sim um mecanismo que capture essa exceção e retorne uma resposta de objeto 404(not found)
+	
+# StandardError
+	
+- resources.exceptions.StandardError.java
+	
+- Criar um objeto java que contenha exatamente a estrutura da imagem abaixo: 
+	
+![image](https://user-images.githubusercontent.com/71105466/170605448-eaa2ccd9-ffa1-4b53-ba8b-bf3dc77bc4d7.png)
+
+- Esse por padrão é oq retorna do postman ao fazer a requisição e não encontrar o ID desejado
+	
+- Então para isso irei montar um objeto contendo a mesma estrutura(TimeStamp, status, error, message e path), para tratar o erro e configura-lo da forma que eu desejar
+	
+![image](https://user-images.githubusercontent.com/71105466/170605697-bd807b76-9cf6-4650-aba7-1b87e4acae56.png)
+
+- Cria também os getters e setters
+
