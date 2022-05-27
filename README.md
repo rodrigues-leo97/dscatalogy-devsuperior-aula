@@ -370,3 +370,54 @@ List<CategoryDTO> listDTO = list.stream().map(x -> new CategoryDTO(x)).collect(C
 
 - Cria também os getters e setters
 
+- Agora eu poderia ir na controller e tratar minha EXCEPTION, pois a classe CategoryService já está identificando que pode estourar uma EXCEÇÃO e agora eu tenho que tratar ela na CONTROLLER
+	
+- Poderia criar um TRY, porém, eu teria que ficar fazendo um TRY toda vez que eu criar um método no controlador que for que te tratar uma EXCEPTION
+	
+- Para isso poderemos criar uma classe especial do Spring: ControllerAdvice, para substituir a necessidade do TRY CATCH
+	
+# ResourceExceptionHandler
+	
+- resources.exceptions.ResourceExceptionHandler.java
+	
+- Ele irá manipular exceções a NÍVEL DA CAMADA DE RESOURCE
+	
+![image](https://user-images.githubusercontent.com/71105466/170606141-c10aac15-cedd-4fdd-9fbb-faa04ad0b68e.png)
+	
+- @ControllerAdvice: isso que permite que essa classe INTERCEPTE alguma exceção que aconteça na CONTROLLER
+	
+- @ExceptionHandler(EntityNotFoundException.class): tem esse decorador com esse ARGUMENTO para que ele saiba o tipo de EXCEPTION que ele irá interceptar
+	
+- Ou seja, se em algum dos métodos das minhas Controllers que tiver alguma Exception que estoura na EntityNotFound, automaticamente ele será enviado para cá e tratada pelo INTERCEPTADOR
+	
+OBS: verificar o import do EntityNotFound, pois existe uma mesma classe com esse nome na Framework
+
+- Ele irá tratar essa exceção
+	
+- Iremos declarar um método PÚBLICO
+	
+![image](https://user-images.githubusercontent.com/71105466/170606245-8bd2b0ae-c0f7-4d8f-9916-aa848c9fa15d.png)
+	
+- O GENERIC dele vai ser a classe <StandardError>, ou seja, esse método vai ser uma resposta de request onde o conteúdo da resposta vai ser um objeto do tipo StandarError
+	
+- Por isso criamos a nossa classe StandardError, pois nela contém a estrutura do meu erro que vai estourar na EXCEPTION, e uso ela pra ser o objeto de retorno da ControllerAdvice
+	
+- No primeiro parâmetro iremos passar a classe da nossa EXCEPTION personalizada que criamos EntityNotFound
+	
+- HttpServletRequest: Esse objeto que vai ter as informações da minha requisição
+	
+- Instancio um objeto StandarError e vou setando nele oq eu desejo para tratar a EXCEPTION
+	
+![image](https://user-images.githubusercontent.com/71105466/170607148-f22d15f9-1232-494b-90f3-d8bf74298f22.png)
+
+- err.setTimestamp(Instant.now()); //para pegar o instante ATUAL da request
+	
+- err.setStatus(HttpStatus.NOT_FOUND.value()); //Código 404
+	
+err.setError("Resource not found"); //setando manualmente uma mensagem a gosto
+	
+err.setMessage(e.getMessage()); //pegando a mensagem passada no método findById para quando o erro estourar
+	
+err.setPath(request.getRequestURI()); //pega o caminho da requisição feita. EX: "/categories/6"
+	
+- return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err); //permite que customize o status que irá retornar, e no caso quero o erro 404 que será o HttpStatus.NOT_FOUND e no corpo o OBJETO que setei os valores acima
