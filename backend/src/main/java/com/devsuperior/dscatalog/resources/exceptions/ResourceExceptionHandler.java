@@ -17,11 +17,11 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<StandardError> entityNotFound(EntityNotFoundException e, HttpServletRequest request) {
 		StandardError err = new StandardError();
-		err.setTimestamp(Instant.now());
+		err.setTimestamp(Instant.now()); //para pegar o instante ATUAL da request
 		err.setStatus(HttpStatus.NOT_FOUND.value()); //404
 		err.setError("Resource not found");
-		err.setMessage(e.getMessage());
-		err.setPath(request.getRequestURI());
+		err.setMessage(e.getMessage()); //pegando a mensagem passada no método findById para quando o erro estourar
+		err.setPath(request.getRequestURI()); //pega o caminho da requisição feita. EX: "/categories/6"
 		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	}
