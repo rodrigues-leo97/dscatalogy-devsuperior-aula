@@ -45,6 +45,20 @@ public class CategoryService {
 		//return new CategoryDTO(entityCategory.get()); //get() serve para pegar o objeto dentro do OPTIONAL, ai não irá retornar um OPTIONAL mas sim o objeto dentro dele
 			
 	}
+	
+
+	@Transactional
+	public CategoryDTO insert(CategoryDTO dto) {
+		//converter para o tipo Categoy(entidade)
+		Category entity = new Category();
+		
+		entity.setName(dto.getName());
+		//repository.save(entity); por padrão retorna uma referencia para a entidade salva, por isso fazer como na linha abaixo
+		entity = repository.save(entity); //por padrão retorna uma referencia para a entidade salva
+	
+		//converter novamente para categoryDTO
+		return new CategoryDTO(entity); 
+	}
 
 }
 
