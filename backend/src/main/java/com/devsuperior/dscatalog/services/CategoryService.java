@@ -79,6 +79,22 @@ public class CategoryService {
 		return new CategoryDTO(entity); 
 	}
 
+	@Transactional
+	public CategoryDTO update(Long id, CategoryDTO dto) {
+		try {
+			Category entity = repository.getOne(id); //cria um objeto provisório, sem ir no banco de dados, e somente quando eu mandar salvar que ele fará a busca na base, justamente para não precisar acessar a base duas vezes
+			
+			entity.setName(dto.getName());
+			entity = repository.save(entity);
+			
+			return new CategoryDTO(entity);	
+			
+		} catch (javax.persistence.EntityNotFoundException e) {
+			throw new EntityNotFoundException("Id " + id +" not found"); //é a minha exception personalizada
+		}
+		
+	}
+
 }
 
 
