@@ -421,3 +421,22 @@ err.setMessage(e.getMessage()); //pegando a mensagem passada no método findById
 err.setPath(request.getRequestURI()); //pega o caminho da requisição feita. EX: "/categories/6"
 	
 - return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err); //permite que customize o status que irá retornar, e no caso quero o erro 404 que será o HttpStatus.NOT_FOUND e no corpo o OBJETO que setei os valores acima
+	
+
+- POST
+	
+- Criando um método POST 
+
+- Criando na controller um novo método
+	
+- neste caso teremos que receber um OBJETO como parâmetro, pois o usuário pode passar uma ou mais informações para acrescentar algo na aplicação
+	
+- @RequestBody para identificar que o OBJETO que a aplicação vai receber vai vir pelo corpo da requisição
+	
+- OBS: neste caso como é algo que estou enviando para a API o código correto Http para ela não é 200, mas sim 201(Recurso criado)
+	
+![image](https://user-images.githubusercontent.com/71105466/170612191-559e6baa-88c4-4c90-a7fb-10c4f554a295.png)
+
+- Dessa forma para tratar quando se está criando um novo recurso e para exibir o 201(created) como retorno
+	
+![image](https://user-images.githubusercontent.com/71105466/170612357-8da066e8-05b6-4c70-adc0-3fb69a370510.png)
