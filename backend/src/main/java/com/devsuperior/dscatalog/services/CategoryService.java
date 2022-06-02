@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,7 @@ import com.devsuperior.dscatalog.dto.CategoryDTO;
 import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.services.exceptions.BadRequestException;
+import com.devsuperior.dscatalog.services.exceptions.DataBaseException;
 import com.devsuperior.dscatalog.services.exceptions.EntityNotFoundException;
 
 @Service
@@ -64,7 +67,7 @@ public class CategoryService {
 		
 		for(Category category : list) {
 			if(dto.getName().equalsIgnoreCase(category.getName())) {
-				throw new BadRequestException("There is already a category with that name registered");
+				throw new BadRequestException("There is already a category with that name registered"); //JÁ EXISTE CATEGORIA REGISTRADA COM ESSE NOME
 			}
 		}
 		
@@ -95,6 +98,22 @@ public class CategoryService {
 		
 	}
 
+	public void delete(Long id) { //não usa o transactional, pq vou capturar uma exception lá do banco de dados e com transactional não é possível capturar
+		
+		//para caso tente deletar um id que não existe
+		try {
+			repository.deleteById(id);
+			
+		} catch (EmptyResultDataAccessException e) { //exception para caso tente deletar um ID que não existe
+			throw new EntityNotFoundException("Id not found " + id);
+		} catch (DataIntegrityViolationException e) { //não posso deletar uma categoria pq os produtos irão ficar sem uma Category, isso irá gerar uma inconsistência nos dados
+			//para capturar uma possível EXCEPTION de integridade para caso tente deletar algo que não pode deletar
+			throw new DataBaseException("Integrity violation");
+		}
+
+		
+	}
+	
 }
 
 

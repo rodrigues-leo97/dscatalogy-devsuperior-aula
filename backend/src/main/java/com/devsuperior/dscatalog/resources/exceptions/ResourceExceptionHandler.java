@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.devsuperior.dscatalog.services.exceptions.BadRequestException;
+import com.devsuperior.dscatalog.services.exceptions.DataBaseException;
 import com.devsuperior.dscatalog.services.exceptions.EntityNotFoundException;
 
 @ControllerAdvice
@@ -30,13 +31,27 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(BadRequestException.class)
 	public ResponseEntity<StandardError> badRequest(BadRequestException e, HttpServletRequest request) {//erro 400(badRequest)
 		StandardError err = new StandardError();
-		err.setTimestamp(Instant.now()); //para pegar o instante ATUAL da request
+		err.setTimestamp(Instant.now());
 		err.setStatus(HttpStatus.BAD_REQUEST.value()); //400 - badRequest
 		err.setError("category already exists");
 		err.setMessage(e.getMessage()); 
-		err.setPath(request.getRequestURI()); //pega o caminho da requisição feita. EX: "/categories/6"
+		err.setPath(request.getRequestURI()); 
 		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
+	
+	@ExceptionHandler(DataBaseException.class)
+	public ResponseEntity<StandardError> database(DataBaseException e, HttpServletRequest request) {//erro 400(badRequest)
+		StandardError err = new StandardError();
+		HttpStatus status = HttpStatus.BAD_REQUEST; //para não ficar repetitivo
+
+		err.setTimestamp(Instant.now()); 
+		err.setStatus(status.value()); //400 - badRequest
+		err.setError("Database exception"); //para quando houver violação de integridade na base de dados
+		err.setMessage(e.getMessage()); 
+		err.setPath(request.getRequestURI());
+		
+		return ResponseEntity.status(status).body(err);
 	}
 	
 }

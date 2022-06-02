@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,6 +57,15 @@ public class CategoryResource {
 			dto = service.update(id, dto); //inserir esse dto no banco de dados
 
 			return ResponseEntity.ok().body(dto); 
+		
+	}
+	
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+			service.delete(id); //inserir esse dto no banco de dados
+
+			//resposta 204 - deu certo e no corpo está vazio
+			return ResponseEntity.noContent().build(); //resposta não precisa ter corpo
 		
 	}
 
