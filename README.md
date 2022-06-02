@@ -423,7 +423,7 @@ err.setPath(request.getRequestURI()); //pega o caminho da requisição feita. EX
 - return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err); //permite que customize o status que irá retornar, e no caso quero o erro 404 que será o HttpStatus.NOT_FOUND e no corpo o OBJETO que setei os valores acima
 	
 
-- POST
+# POST
 	
 - Criando um método POST 
 
@@ -440,3 +440,35 @@ err.setPath(request.getRequestURI()); //pega o caminho da requisição feita. EX
 - Dessa forma para tratar quando se está criando um novo recurso e para exibir o 201(created) como retorno
 	
 ![image](https://user-images.githubusercontent.com/71105466/170612357-8da066e8-05b6-4c70-adc0-3fb69a370510.png)
+	
+	
+# DELETE
+	
+![image](https://user-images.githubusercontent.com/71105466/171527881-d4637b11-fc36-486d-b9af-e1f52e9138b5.png)
+
+- O método delete só irá receber o id da URL
+	
+- O retorno dele não terá corpo, pois irá apenas deletar, e será o código 204
+	
+- Por não ter corpo o MÉTODO dele poderá ser VOID
+	
+- Se usa para quando não há corpo o noContent().build();
+
+![image](https://user-images.githubusercontent.com/71105466/171528065-77baca63-31f8-4549-9c5a-0705078e6e61.png)
+
+- Temos uma particularidade neste caso, pois teremos dois CATCH
+
+- Isso se dá devido ao fato que além da pessoa poder digitar um ID que não existe ela também poderá deletar algo que não pode ser deletado
+	
+- Por exemplo, uma Categoria tem Produtos cadastrados, se apagar uma categoria com produtos cadastrados esses Produtos irão ficar sem Category
+	
+- E isso não pode acontecer, então temos ai uma VIOLAÇÃO DA INTEGRIDADE DOS DADOS
+	
+- Criamos também uma outra EXCEPTION personalizada 
+	
+- services.exceptions.DataBaseException.java
+	
+- Também iremos INTERCEPTAR essa exceção quando ela for lançada
+	
+![image](https://user-images.githubusercontent.com/71105466/171528411-9374a0b5-52b3-48c9-99ae-7ba7c93abe91.png)
+
