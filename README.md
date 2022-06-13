@@ -471,4 +471,48 @@ err.setPath(request.getRequestURI()); //pega o caminho da requisição feita. EX
 - Também iremos INTERCEPTAR essa exceção quando ela for lançada
 	
 ![image](https://user-images.githubusercontent.com/71105466/171528411-9374a0b5-52b3-48c9-99ae-7ba7c93abe91.png)
+	
+# DADOS DE AUDITORIA
+	
+- Armazenando dados de acordo com o TIMEZONE
+
+- Criando os atributos na classe Category.java
+	
+![image](https://user-images.githubusercontent.com/71105466/172970784-c6a47134-a63e-4145-b5fd-673f612ccadb.png)
+	
+- @Colum(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE") -> TIMESTAMP sem timezone, ou seja, não especificando um timezone
+	
+![image](https://user-images.githubusercontent.com/71105466/172971118-b18a4af9-700a-4999-bc93-f1ddd3da28cd.png)
+
+	
+- Não precisa do método SET, para que não seja disponível e nem possível alterar esses dados pela aplicação
+	
+- @PreUpdate -> Para que cada vez que eu mande salvar uma categoria ele armazene o instante atual, da mesma forma que quando eu ATUALIZAR ele fará a mesma coisa
+	
+- OBS: Não precisa passar isso para a DTO, pq não é um tipo de dado que quero que o USUÁRIO que está acessando a aplicação tenha acesso, então por isso não tem sentido colocar na camada de DTO isso, fica somente na camada da MODEL
+	
+![image](https://user-images.githubusercontent.com/71105466/172971440-03d3c44a-7b3b-4727-8892-7fe5364f61c9.png)
+
+- Atualizei os dados a exibirem na base de dados
+	
+# PAGINAÇÃO
+	
+```
+@RequestParam(value = "page", defaultValue = "0") Integer page,
+@RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
+@RequestParam(value = "orderBy", defaultValue = "moment") String orderBy,
+@RequestParam(value = "direction", defaultValue = "DESC") String direction)
+	
+```
+	
+- diferente do PathVariable, pois o mesmo é um parâmetro obrigatório
+	
+- Toda vez que for um parâmetro opcional se usa o @RequestParam
+	
+![image](https://user-images.githubusercontent.com/71105466/172972636-87286298-21fb-49e0-9c35-00c7e0668392.png)
+	
+@RequestParam(value = "page", defaultValue = "0") Integer page, //se não informar esse parâmetro irá começar pela página ZERO
+@RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage, // Quantidade de linhas/itens pra trazer na página, no caso 12
+@RequestParam(value = "orderBy", defaultValue = "name") String orderBy, // ORDENAR POR NOME
+@RequestParam(value = "direction", defaultValue = "DESC") String direction) //Em ordem descendente
 
