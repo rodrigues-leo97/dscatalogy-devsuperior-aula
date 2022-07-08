@@ -21,7 +21,7 @@ public class ProductDTO  implements Serializable{
 	private Instant date;
 	
 	//posso cadastrar mais de uma categoria, então preparo a aplicação pra receber uma lista
-	private List<CategoryDTO> categories = new ArrayList<>();
+	private List<CategoryDTO> categories = new ArrayList<>(); //coleção
 	
 	public ProductDTO() {
 		

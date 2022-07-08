@@ -115,7 +115,6 @@ public class CategoryService {
 			//para capturar uma possível EXCEPTION de integridade para caso tente deletar algo que não pode deletar
 			throw new DataBaseException("Integrity violation");
 		}
-
 		
 	}
 	
