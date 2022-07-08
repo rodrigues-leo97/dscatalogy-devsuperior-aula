@@ -1,7 +1,10 @@
 package com.devsuperior.dscatalog.services;
 
+import com.devsuperior.dscatalog.dto.CategoryDTO;
 import com.devsuperior.dscatalog.dto.ProductDTO;
+import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.entities.Product;
+import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
 import com.devsuperior.dscatalog.services.exceptions.BadRequestException;
 import com.devsuperior.dscatalog.services.exceptions.DataBaseException;
@@ -23,12 +26,15 @@ public class ProductService {
     @Autowired
     ProductRepository repository;
 
+    @Autowired
+    CategoryRepository categoryRepository;
+
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAllPaged(PageRequest pageRequest) {
         //Product product = new Product();
         Page<Product> list = repository.findAll(pageRequest);
         return list
-                .map(x -> new ProductDTO(x)); //Page já é do tipo Stream()
+                .map(x -> new ProductDTO(x, x.getCategories())); //Page já é do tipo Stream()
     }
 
     @Transactional(readOnly = true)
@@ -46,19 +52,12 @@ public class ProductService {
 
     @Transactional
     public ProductDTO insert(ProductDTO dto) throws BadRequestException {
-        //converter para o tipo Categoy(entidade)
+        //converter para o tipo Product(entidade)
         Product entity = new Product();
 
-        List<Product> list = repository.findAll();
-
-        for(Product product : list) {
-            if(dto.getName().equalsIgnoreCase(product.getName())) {
-                throw new BadRequestException("There is already a Product with that name registered"); //JÁ EXISTE CATEGORIA REGISTRADA COM ESSE NOME
-            }
-        }
-
-        //se não existir nome repetido então ele seta o nome na entity
-        // entity.setName(dto.getName());
+        //método para setar os dados do Product, para que assim não precise repetir código em outros métodos
+        //o método já serve para que isso seja feito pensando no relacionamento entre as tabelas
+        copyDtoToEntity(dto, entity);
 
         entity = repository.save(entity); //por padrão retorna uma referencia para a entidade salva
 
@@ -70,6 +69,10 @@ public class ProductService {
     public ProductDTO update(Long id, ProductDTO dto) {
         try {
             Product entity = repository.getOne(id); //cria um objeto provisório, sem ir no banco de dados, e somente quando eu mandar salvar que ele fará a busca na base, justamente para não precisar acessar a base duas vezes
+
+            //método para setar os dados do Product, para que assim não precise repetir código em outros métodos
+            //o método já serve para que isso seja feito pensando no relacionamento entre as tabelas
+            copyDtoToEntity(dto, entity);
 
             // entity.setName(dto.getName());
             entity = repository.save(entity);
@@ -93,6 +96,24 @@ public class ProductService {
         } catch (DataIntegrityViolationException e) { //não posso deletar uma categoria pq os produtos irão ficar sem uma Category, isso irá gerar uma inconsistência nos dados
             //para capturar uma possível EXCEPTION de integridade para caso tente deletar algo que não pode deletar
             throw new DataBaseException("Integrity violation");
+        }
+
+    }
+
+    private void copyDtoToEntity(ProductDTO dto, Product entity) {
+        // só não irá setar o ID
+        entity.setName(dto.getName());
+        entity.setDate(dto.getDate());
+        entity.setDescription(dto.getDescription());
+        entity.setImgUrl(dto.getImgUri());
+        entity.setDate(dto.getDate());
+
+        //setando as categorias, copiando as categorias do DTO para a ENTIDADE
+        //para garantir que vai copiar as categorias que vieram no DTO, ai por isso limpanos a entidade como abaixo:
+        entity.getCategories().clear(); //para limpar a entidade
+        for(CategoryDTO catDto : dto.getCategories()) { //se chegou as categorias no ProductDTO eu percorro a lista para instanciar uma categoria
+            Category category  = categoryRepository.getOne(catDto.getId()); //getOne para não acessar o BD, apenas salva em memória e posterior adiciona quando for necessário
+            entity.getCategories().add(category);
         }
 
     }
