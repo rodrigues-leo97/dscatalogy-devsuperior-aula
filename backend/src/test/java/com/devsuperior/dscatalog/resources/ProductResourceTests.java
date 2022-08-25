@@ -47,6 +47,5 @@ public class ProductResourceTests { //testes na CAMADA DE WEB(TESTE DE UNIDADE) 
     @Test
     public void findAllShouldReturnPage() throws Exception{
         //mockMvc.perform(get("/products"));
-        mockMvc.perform(get("/products"));
     }
 }
