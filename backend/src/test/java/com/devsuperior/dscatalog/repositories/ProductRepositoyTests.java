@@ -1,6 +1,7 @@
 package com.devsuperior.dscatalog.repositories; //usa os mesmos nomes de pacote das repositories ou qualquer outra classe para acessar os métodos private caso tenham
 
 import com.devsuperior.dscatalog.entities.Product;
+import com.devsuperior.dscatalog.services.exceptions.EntityNotFoundException;
 import com.devsuperior.dscatalog.tests.Factory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +37,6 @@ public class ProductRepositoyTests {
         // Product product = new Product(); -> criar classe auxiliar para não precisar ficar instanciando toda hora
         Product product = Factory.createProduct();
         product.setId(null); //para garantir que estou inserindo um produto com id nulo
-
         product = repository.save(product);
 
         Assertions.assertNotNull(product.getId()); //testando se o id não é nulo
@@ -60,6 +60,19 @@ public class ProductRepositoyTests {
         Assertions.assertThrows(EmptyResultDataAccessException.class, () -> { //exception que é lançada para quando não é encontrado o id buscado
             repository.deleteById(nonExistingId); //passar um id que não existe para lançar uma EXCEPTION
         });
+    }
+
+    @Test
+    public void findByIdWhenIdExists() {
+       Optional<Product> result =  repository.findById(existingId);
+       Assertions.assertTrue(result.isPresent());
+    }
+
+    @Test
+    public void findByIdWhenIdNotExists() {
+        Optional<Product> result = repository.findById(nonExistingId);
+        Assertions.assertFalse(result.isPresent());
+
     }
 
 }
