@@ -45,9 +45,7 @@ public class ProductService {
         //Product Product = entityProduct.get();
         Product entity = entityProduct.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
         return new ProductDTO(entity, entity.getCategories()); //usando o construtor personalizado para ter as Categorias, e passará a retornar um DTO com uma lista de categorias
-
         //return new ProductDTO(entityProduct.get()); //get() serve para pegar o objeto dentro do OPTIONAL, ai não irá retornar um OPTIONAL mas sim o objeto dentro dele
-
     }
 
 
