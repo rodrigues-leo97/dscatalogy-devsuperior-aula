@@ -75,9 +75,7 @@ public class ProductService {
 
             // entity.setName(dto.getName());
             entity = repository.save(entity);
-
             return new ProductDTO(entity);
-
         } catch (javax.persistence.EntityNotFoundException e) {
             throw new EntityNotFoundException("Id " + id +" not found"); //é a minha exception personalizada
         }
