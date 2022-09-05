@@ -71,6 +71,7 @@ public class ProductResourceTests { //testes na CAMADA DE WEB(TESTE DE UNIDADE) 
         //usa o eq() pois só com o ANY e o tipo de id passado ele irá acusar erro
         when(service.update(eq(existingId), any())).thenReturn(productDTO); //any() para simular o comportamento de qualquer obj, e não precisar passar o productDTO
         when(service.update(eq(nonExistingId), any())).thenThrow(EntityNotFoundException.class);
+        when(service.insert(any())).thenReturn(productDTO);
 
         //delete é um método VOID, e quando é VOID se muda a sequência
         doNothing().when(service).delete(existingId); //não faça nada quando encontrar o ID existente para deletar
@@ -140,7 +141,6 @@ public class ProductResourceTests { //testes na CAMADA DE WEB(TESTE DE UNIDADE) 
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 );
-
         result.andExpect(status().isNotFound());
     }
 
@@ -150,7 +150,6 @@ public class ProductResourceTests { //testes na CAMADA DE WEB(TESTE DE UNIDADE) 
                 mockMvc.perform(delete("/products/{id}", existingId)
                         .accept(MediaType.APPLICATION_JSON)
                 );
-
         result.andExpect(status().isNoContent());
 
     }
@@ -161,9 +160,25 @@ public class ProductResourceTests { //testes na CAMADA DE WEB(TESTE DE UNIDADE) 
                 mockMvc.perform(delete("/products/{id}", nonExistingId)
                         .accept(MediaType.APPLICATION_JSON)
                 );
-
         result.andExpect(status().isNotFound());
 
+    }
+
+    @Test
+    public void insertShouldReturnProductCreated() throws Exception{
+        String jsonBody = objectMapper.writeValueAsString(productDTO); //converti um objeto Java para um String JSON
+
+        ResultActions result =
+                mockMvc.perform(post("/products")
+                        .content(jsonBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                );
+
+        result.andExpect(status().isCreated());
+        result.andExpect(jsonPath("$.id").exists());
+        result.andExpect(jsonPath("$.name").exists());
+        result.andExpect(jsonPath("$.description").exists());
     }
 
 }
