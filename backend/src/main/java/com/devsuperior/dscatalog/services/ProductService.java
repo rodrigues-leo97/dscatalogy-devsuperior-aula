@@ -36,6 +36,7 @@ public class ProductService {
         Page<Product> list = repository.findAll(pageable);
         return list
                 .map(x -> new ProductDTO(x, x.getCategories())); //Page já é do tipo Stream()
+
     }
 
     @Transactional(readOnly = true)

@@ -38,7 +38,7 @@ public class Product {
 	
 	//SET -> para garantir que o mesmo produto não tenha a mesma categoria mais de uma vez, ou seja, sem repetições
 	@ManyToMany
-	@JoinTable(name = "tb_product_category", //nome da tabela
+	@JoinTable(name = "tb_product_category", //nome da tabela AUXILIAR
 		joinColumns = @JoinColumn(name = "product_id"), //joinColumns -> pega da própria classe, Product
 		inverseJoinColumns = @JoinColumn(name = "category_id")) //inverseJoin -> pega o tipo que tiver na coleção <category>
 	Set<Category> categories = new HashSet<>(); //SET é uma interface, por isso dar o NEW em uma classe que instancia essa interface(Hash)

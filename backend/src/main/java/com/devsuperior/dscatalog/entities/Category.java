@@ -2,16 +2,11 @@ package com.devsuperior.dscatalog.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 
 @Entity
@@ -29,6 +24,9 @@ public class Category implements Serializable {
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE") 
 	private Instant updateAt;
+
+	@ManyToMany(mappedBy = "categories") //não preciso escrever o código do manyToMany tudo novamente aqui, já está na classe product, eu só preciso MAPEAR com o MAPPEDBY usando como base o atributo java da classe PRODUCT
+	private Set<Product> products = new HashSet<>();
 
 	//Constructor
 	public Category() {
@@ -75,6 +73,9 @@ public class Category implements Serializable {
 		updateAt = Instant.now();
 	}
 
+	public Set<Product> getProducts() { //não precisa colocar o SETTER dele nesse caso, pois se trata de uma classe onde será apenas mostrado o relacionamento na tabela auxiliar
+		return products;
+	}
 
 	//Equals and Hashcode
 	@Override
