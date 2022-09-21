@@ -16,6 +16,8 @@ public class User implements Serializable {
     private Long id;
     private String firstName;
     private String lastName;
+
+    @Column(unique = true) //para impedir que haja emails repetidos, pois é ÚNICO
     private String email;
     private String password;
 
