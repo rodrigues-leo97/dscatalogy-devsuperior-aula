@@ -20,7 +20,7 @@ public class User implements Serializable {
     private String password;
 
     //relacionamento
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER) //para forçar que sempre que buscar um USER no banco sempre venha os ROLES(perfis do usuários), pois o SPRING SECURITY ele exige que tenha isso, ai sempre virá juntos os objetos de perfis(roles nesse caso)
     @JoinTable(name = "tb_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
