@@ -9,15 +9,29 @@ import java.util.Set;
 import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.entities.Product;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+
 public class ProductDTO  implements Serializable{
 	private static final long serialVersionUID = 1L;
 
+	//OBS: os @ nesse caso são feitos aqui pq são eles que passam pelas validações das requisições primeiro
+	//além disso colocar anotações nas controllers/resources para identificar que essas validações tem que ser cobradas em determinados métodos
+
 	private Long id;
+
+	@Size(min = 5, max = 60, message = "Nome deve ter entre 5 e 60 caracteres") //para controle de tamanho, min e max e caso de erro exibe a mensagem
+	@NotBlank(message = "Favor preencher o nome, campo requerido") //blank válida até se o user digitou espaços em branco, diferente do empty
 	private String name;
 	private String description;
+
+	@Positive(message = "O preço deve ser um valor positivo")
 	private Double price;
 	private String imgUri;
-	
+
+	@PastOrPresent(message = "A data do produto não pode ser futura")
 	private Instant date;
 	
 	//posso cadastrar mais de uma categoria, então preparo a aplicação pra receber uma lista

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 
@@ -46,7 +47,7 @@ public class ProductResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO dto) {
+	public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO dto) { //@Valid para validar os @DECORATORS que estão na classe do ProductDTO
 			dto = service.insert(dto); //inserir esse dto no banco de dados
 			URI uri = ServletUriComponentsBuilder
 					.fromCurrentRequest()
@@ -58,7 +59,7 @@ public class ProductResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<ProductDTO> update(@PathVariable Long id,  @RequestBody ProductDTO dto) {
+	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @Valid @RequestBody ProductDTO dto) {
 			dto = service.update(id, dto); //inserir esse dto no banco de dados
 
 			return ResponseEntity.ok().body(dto);

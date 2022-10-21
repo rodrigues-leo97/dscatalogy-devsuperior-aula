@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 
@@ -33,7 +34,7 @@ public class UserResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserDTO> insert(@RequestBody UserInsertDTO dto) {
+	public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserInsertDTO dto) {
 			UserDTO newDto = service.insert(dto); //pois ele recebe o UserInsertDTO mas ele retorna o UserDTO, pois tem toda a questão do tratamento da senha
 			URI uri = ServletUriComponentsBuilder
 					.fromCurrentRequest()
@@ -45,7 +46,7 @@ public class UserResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<UserDTO> update(@PathVariable Long id,  @RequestBody UserDTO dto) {
+	public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserDTO dto) {
 			dto = service.update(id, dto); //inserir esse dto no banco de dados
 
 			return ResponseEntity.ok().body(dto);
