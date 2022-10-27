@@ -57,7 +57,7 @@ public class ResourceExceptionHandler {
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ValidationError> Validation(MethodArgumentNotValidException e, HttpServletRequest request) {//erro 400(badRequest)
+	public ResponseEntity<ValidationError> validation(MethodArgumentNotValidException e, HttpServletRequest request) {//erro 400(badRequest)
 		ValidationError err = new ValidationError();
 		HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY; //422 - alguma entidade não foi possível de ser processada
 
