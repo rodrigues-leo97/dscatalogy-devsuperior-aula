@@ -516,3 +516,91 @@ err.setPath(request.getRequestURI()); //pega o caminho da requisição feita. EX
 @RequestParam(value = "orderBy", defaultValue = "name") String orderBy, // ORDENAR POR NOME
 @RequestParam(value = "direction", defaultValue = "DESC") String direction) //Em ordem descendente
 
+
+
+
+
+
+# AUTENTICAÇÃO JWT
+
+### PARTE 1
+
+- Implementar algumas interfaces:
+
+- UserDetails e UserDetailsService
+
+- Implementando UserDetails:
+
+	- Implementar na classe User.java o UserDetails
+
+		- No getUsername() substituir o return pelo email
+
+			- Iremos usar o email como base para autenticar
+			
+- O método <? extends GrantedAuthority> getAuthorities()
+
+	- Retorna uma coleção do tipo GrantedAuthority
+		
+		- Na classe User.java o User user tem um relacionamento com a classe de ROLE
+			
+			- Irei percorrer cada elemento do tipo ROLE convertendo para o elemento do tipo GrantedAuthority
+			
+![image](https://user-images.githubusercontent.com/71105466/201779826-42386d4d-708e-4492-bb3d-093ae63f65c3.png)
+
+- Todo os outros métodos basta colocar o return como TRUE, mas caso queira evoluir a regra da aplicação basta manipular os métodos para o desejado
+
+
+### PARTE 2
+
+- Na classe de serviço UserService.java
+
+	- Implementar UserDetailsService
+	
+- Irá implementar o método loadUserByUsername() throws UserNameNotFoundException
+
+	- é um método para realizar a busca por username, neste caso dessa aplicação por EMAIL
+	
+	- realizar a busca na REPOSITORY do User buscando pelo email
+	
+	- Essa classe tem que retornar uma EXCEPTION caso não encontre o email
+	
+![image](https://user-images.githubusercontent.com/71105466/201780882-7fb8ad29-05e9-4511-bc7a-06d9bbe74889.png)
+
+
+### PARTE 3
+
+- CLASSE DE CONFIGURAÇÃO DE SEGURANÇA WEB (WebSecurityConfigurerAdapter)
+
+	- Neste caso será a classe WebSecurityConfig.java já criada na nossa aplicação
+	
+	- Ela foi criada quando foi feito a criação da classe ROLE e USER na aplicação, já preparando para esse contexto
+	
+	- Na classe terá o método configure(WebSecurity web) que foi criado para liberar todas as rotas, ele precisará ser alterado
+	
+	- Iremos acrescentar no antMatchers o /actuator
+		- Outra lib que o SringCloud usa para passar nas requisições
+		- Continuamos liberando todos, porém, passando também por essa rota pra liberar
+		
+- Realizar uma SOBRECARGA do método configure()
+
+	- Irá servir para configurar o algoritmo que está sendo usado para encriptar a senha(BCryptPasswordEncoder neste caso)
+	
+	- Configurar também quem é o UserDetailService, ou seja, a classe que usamos pra implementar essa interface
+	
+	- OBS: injetar o BCrypt e o UserDetailService
+	
+	
+	
+- Configurar o método AuthenticationManager authenticationManager()
+
+	- Injetar a annotation @Bean
+	
+	- Para que ele seja também um componente disponível no sistema, pq iremos usar futuramente no AuthorizationService
+	
+	
+![image](https://user-images.githubusercontent.com/71105466/201782439-d9286e75-78f8-4070-bd7c-a5f68ee3a2ca.png)
+
+
+
+
+
