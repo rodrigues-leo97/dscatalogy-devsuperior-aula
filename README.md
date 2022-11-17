@@ -601,6 +601,28 @@ err.setPath(request.getRequestURI()); //pega o caminho da requisição feita. EX
 ![image](https://user-images.githubusercontent.com/71105466/201782439-d9286e75-78f8-4070-bd7c-a5f68ee3a2ca.png)
 
 
+# SPRING CLOUD OAUTH2
+
+### PARTE 4
+
+- Classe de configuração para Authorization server
+
+	- AuthorizationServerConfigurerAdapter
+	
+		- Criar no pacote com.devsuperior.dscatalog.config.AuthorizationServerConfig
+		
+		- Transformar ela numa classe de configuração (@Configuration) para que possa usa-la como um componente através do @Bean indicando o gerenciamento das suas dependências
+		
+		- Injetar como na imagem abaixo: 
+		
+		![image](https://user-images.githubusercontent.com/71105466/202334775-16f6f88a-56df-4b54-b60f-2770c40bea17.png)
+
+		- Após isso criar três métodos de configurações que virão do EXTENDS da classe AuthorizationServerConfigurerAdapter, como na imagem abaixo:
+		
+		![image](https://user-images.githubusercontent.com/71105466/202334884-3c4be09b-94c2-4b97-b2ef-dc18292f1558.png)
+
+
+
 
 
 
