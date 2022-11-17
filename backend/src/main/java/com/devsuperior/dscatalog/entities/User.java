@@ -1,14 +1,20 @@
 package com.devsuperior.dscatalog.entities;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tb_user")
-public class User implements Serializable {
+public class User implements UserDetails, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -73,8 +79,46 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    //IMPLEMENTAÇÃO DO USERDETAIL -> desenvolver os métodos de acordo com a necessidade do código
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        //para retornar uma coleção do tipo GrantedAuthority
+        //o User tem uma associação com os ROLES, percorrer a coleção convertendo cada elemento do tipo ROLE para o tipo GRANTEDAUTHORITY
+
+        return roles
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.getAuthority())) //classe concreta que implementa o GRANTEDAUTHORITY(interface), getAuthority(pq quero o nome do ROLE que está nesse obj role)
+                .collect(Collectors.toList());
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    //daqui pra baixo vou fazer tudo retornar true pq não tem essa lógica por enquanto na aplicação
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public void setPassword(String password) {
