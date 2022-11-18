@@ -63,10 +63,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Camel Starter -->
 		<dependency>
-			<groupId>org.springframework.security.oauth.boot</groupId>
-			<artifactId>spring-security-oauth2-autoconfigure</artifactId>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-spring-boot-starter</artifactId>
+			<version>3.19.0</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -87,6 +90,7 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
    		</dependencies>
 </dependencyManagement>
 
