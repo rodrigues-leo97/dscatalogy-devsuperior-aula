@@ -71,6 +71,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         endpoints.authenticationManager(authenticationManager) //nesse caso será o authentication que processará a autenticação
                 .tokenStore(tokenStore) //objetos responsáveis por processar o TOKEN
                 .accessTokenConverter(accessTokenConverter)
-                .tokenEnhancer(chain);
+                .tokenEnhancer(chain); //irá acrescentar informações dentro do CICLO do token
     }
 }
