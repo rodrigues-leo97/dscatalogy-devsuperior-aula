@@ -14,22 +14,20 @@ public class FileRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("file://" + path + "input?delete=true")
+        from("file://" + path + "input?move=${date:now:yyyyMMdd}/${file:name}") //quando quero criar uma pasta também para mover o arquivo, passando a data atual seguido do nome de uma pasta do arquivo para dentro dela
                 .log("${file:name}")
-                .process(new FileProcessor())
                 .to("file://" + path + "output");
-
     }
 }
 
 //alternativa para quando não se quer usar os BEANS e COMPONENTS, ai se faz dessa forma
-class  FileProcessor implements Processor { //método que terá o objeto de intercâmbio que está passando na execução do fluxo do CONFIGURE
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        System.out.println("Processor: " + exchange.getIn().getBody()); //mostra o caminho do arquivo que está sendo consumindo
-
-    }
-}
+//class  FileProcessor implements Processor { //método que terá o objeto de intercâmbio que está passando na execução do fluxo do CONFIGURE
+//    @Override
+//    public void process(Exchange exchange) throws Exception {
+//        System.out.println("Processor: " + exchange.getIn().getBody()); //mostra o caminho do arquivo que está sendo consumindo
+//
+//    }
+//}
 
 //@Component
 //class FileComponent { //ELE EXIJE UM ÚNICO MÉTODO POR CLASSE, NÃO PODE TER MAIS DE UM
