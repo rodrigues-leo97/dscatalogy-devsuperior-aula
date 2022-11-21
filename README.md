@@ -620,6 +620,67 @@ err.setPath(request.getRequestURI()); //pega o caminho da requisição feita. EX
 		- Após isso criar três métodos de configurações que virão do EXTENDS da classe AuthorizationServerConfigurerAdapter, como na imagem abaixo:
 		
 		![image](https://user-images.githubusercontent.com/71105466/202334884-3c4be09b-94c2-4b97-b2ef-dc18292f1558.png)
+		
+		
+		
+		
+# EXTERNALIZANDO CONFIGURAÇÕES
+
+- Iremos externalizar algumas propriedades pois estão em hardcode dentro do código
+
+- Para isso iremos no APPLICATION.PROPERTIE, deixando assim:
+
+![image](https://user-images.githubusercontent.com/71105466/202606467-7e6505b7-a02f-4075-8f51-69a48c016417.png)
+
+- Iremos deixar uma referência a uma variável de ambiente, usando o operador de coalescência
+
+	- CLIENT_ID:dscatalog => a variável de ambiente é o CLIENT_ID e irá guardar um valor no contexto do sistema, ou seja, se o ambiente em que a aplicação estiver não dizer qual será o valor da variável ela automaticamente irá assumir o valor que vem após o : (neste caso será o dscatalog)
+	
+- Dentro da classe que estava em hardcode eu crio uma variável e coloco a anotação do @Value em cima da variável, fazendo um apontamente para a variável de ambiente do application.propertie, como na imagem abaixo: 
+
+	![image](https://user-images.githubusercontent.com/71105466/202606950-7e8f3ce3-702c-4dd2-9178-9a22d995dd51.png)
+	
+	
+# ACRESCENTANDO INFORMAÇÃO AO TOKEN
+
+- Por padrão no token vai o username e as roles dele, então, podemos acrescentar mais informações caso precisemos
+
+	- Para isso iremos usar um COMPONENTE chamado TokenEnhencer
+	
+	- Não será um SERVICE, por isso será criado outro pacote pra ele
+	
+		- dscatalog.components.JwtTokenEnhancer
+	
+	- Irá implementar o TOKEN ENHANCER na classe
+	
+	- Colocar anotação @Component e implementar a interface
+	
+### OBJETIVO DO TOKEN ENHANCER
+
+- Ele irá entrar no CICLO DE VIDA do token que será gerado e irá acrescentar as informações, veja o exemplo da implementação do método da interface na imagem abaixo:
+
+![image](https://user-images.githubusercontent.com/71105466/202607510-dd435069-e3e1-40d2-ae35-28abb771e5eb.png)
+
+- Para fazer a busca na repository ele irá usar o objeto já que vem no argumento da classe(oAuth2Authentication), pois ele já tem as informações do token, ai com ele conseguimos realizar a busca na REPOSITORY
+
+- E para inserirmos as informações no token de fato após usar o MAP<> para informar o que queremos fazer usamos o oAuth2AccessToken, pois é ele que de fato irá entrar no ciclo de vida e acrescentar as informações ao token com base no que foi setado no código nas linhas ácima, neste caso o ID e PRIMEIRO NOME
+
+- Após a implementação desse método será necessário alterar a classe AuthorizationServerConfig
+
+### ALTERANDO A CLASSE AuthorizationServerConfig
+
+- Iremos injetar o JwtTokenEnhancer
+
+![image](https://user-images.githubusercontent.com/71105466/202607923-eec0c666-c34b-4d2a-b824-080d7d486201.png)
+
+	- Após isso iremos alterar o método  public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception
+	
+	![image](https://user-images.githubusercontent.com/71105466/202608146-6e78778d-ead2-4221-9ced-b0eb166451ad.png)
+
+	- Isso fará a implementação dele conforme esperado dentro do ciclo de vida do token
+
+
+
 
 
 
