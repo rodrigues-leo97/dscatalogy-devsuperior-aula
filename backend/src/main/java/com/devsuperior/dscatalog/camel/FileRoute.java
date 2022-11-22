@@ -14,10 +14,8 @@ public class FileRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("file://" + path + "input?recursive=true&delete=true") //além de monitorar as subpastas o delete é neste caso para não entrar em um looping e não criar a .camel
-
-                .log("${file:name}")
-                .to("file://" + path + "output?flatten=true"); //quando eu consumir da pasta de entrada, todos arquivos que consumir eu ignoro as subpastas que virá do FROM e coloco tudo em uma única pasta, ou seja, ele pega apenas os arquivos dentro da pasta e não da subpasta
+        from("file://" + path + "input?recursive=true&delete=true")
+                .to("bean:fileComponent"); //não preciso gerar um arquivo novo a partir do FROM, posso somente transmitir ele para o fileComponent
     }
 }
 
@@ -30,13 +28,14 @@ public class FileRoute extends RouteBuilder {
 //    }
 //}
 
-//@Component
-//class FileComponent { //ELE EXIJE UM ÚNICO MÉTODO POR CLASSE, NÃO PODE TER MAIS DE UM
-//    public void log(File file) {
-//        System.out.println("FileComponent: " + file.getName()); //ele printa o nome do arquivo
-//    }
-//
-//}
+@Component
+class FileComponent { //ELE EXIJE UM ÚNICO MÉTODO POR CLASSE, NÃO PODE TER MAIS DE UM
+    public void log(File file) {
+        String msg = file.getName();
+        System.out.println("FileComponent: " + file.getName()); //ele printa o nome do arquivo
+    }
+
+}
 // ele irá ficar monitorando as pastas e arquivos enquanto a aplicação roda
 //        //com o delete=true ele não cria a pasta .camel que na verdade seria um backup
 //        from("file://" + path + "input?delete=true") //usa o FILE para leitura de arquivo(ou seja, PATH) e irá criar uma pasta caso não tenha(no caso a pasta INPUT), tem como forçar para não criar caso não tenha
