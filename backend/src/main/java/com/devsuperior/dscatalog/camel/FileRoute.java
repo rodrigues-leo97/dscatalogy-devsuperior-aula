@@ -3,6 +3,7 @@ package com.devsuperior.dscatalog.camel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.processor.FilterProcessor;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -15,7 +16,12 @@ public class FileRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("file://" + path + "input?recursive=true&delete=true")
-                .to("bean:fileComponent"); //não preciso gerar um arquivo novo a partir do FROM, posso somente transmitir ele para o fileComponent
+                .choice() //para dizer que a partir do HEADER da mensagem do FILE eu posso tomar uma descisão
+                    .when(simple("${header.CamelFileLength < 422}")) //se o HEADER for menor doq 422 bytes eu envio para o BEAN
+                         .to("bean:fileComponent") //não preciso gerar um arquivo novo a partir do FROM, posso somente transmitir ele para o fileComponent
+        .otherwise() //caso não atenda a condição de cima
+                .process(new FileProcessor());
+
     }
 }
 
@@ -36,6 +42,15 @@ class FileComponent { //ELE EXIJE UM ÚNICO MÉTODO POR CLASSE, NÃO PODE TER MA
     }
 
 }
+
+class FileProcessor implements Processor {
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        System.out.println("PROCESSOR: " + exchange.getIn().getBody());
+    }
+}
+
+
 // ele irá ficar monitorando as pastas e arquivos enquanto a aplicação roda
 //        //com o delete=true ele não cria a pasta .camel que na verdade seria um backup
 //        from("file://" + path + "input?delete=true") //usa o FILE para leitura de arquivo(ou seja, PATH) e irá criar uma pasta caso não tenha(no caso a pasta INPUT), tem como forçar para não criar caso não tenha
