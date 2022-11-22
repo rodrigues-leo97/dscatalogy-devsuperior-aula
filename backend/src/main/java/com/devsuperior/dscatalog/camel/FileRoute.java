@@ -14,7 +14,7 @@ public class FileRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("file://" + path + "input?move=${date:now:yyyyMMdd}/${file:name}") //quando quero criar uma pasta também para mover o arquivo, passando a data atual seguido do nome de uma pasta do arquivo para dentro dela
+        from("file://" + path + "input?move=${date:now:yyyyMMdd}/copy-${file:name}") //quando quero criar uma pasta também para mover o arquivo, passando a data atual seguido do nome de uma pasta do arquivo para dentro dela
                 .log("${file:name}")
                 .to("file://" + path + "output");
     }
