@@ -14,9 +14,10 @@ public class FileRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("file://" + path + "input?timeUnit=SECONDS&initialDelay=20") //tempo que irá levar para ler a pasta novamente, por padrão é milisegundos, mas assim informo que será em SEGUNDOS
+        from("file://" + path + "input?recursive=true&delete=true") //além de monitorar as subpastas o delete é neste caso para não entrar em um looping
+
                 .log("${file:name}")
-                .to("file://" + path + "output");
+                .to("file://" + path + "output?flatten=true"); //quando eu consumir da pasta de entrada, todos arquivos que consumir eu ignoro as subpastas que virá do FROM e coloco tudo em uma única pasta, ou seja, ele pega apenas os arquivos dentro da pasta e não da subpasta
     }
 }
 
