@@ -14,7 +14,7 @@ public class FileRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("file://" + path + "input?recursive=true") //recursive=true, serve para que o camel fique monitorando também as subpastas dentro da input
+        from("file://" + path + "input?timeUnit=SECONDS&initialDelay=20") //tempo que irá levar para ler a pasta novamente, por padrão é milisegundos, mas assim informo que será em SEGUNDOS
                 .log("${file:name}")
                 .to("file://" + path + "output");
     }
