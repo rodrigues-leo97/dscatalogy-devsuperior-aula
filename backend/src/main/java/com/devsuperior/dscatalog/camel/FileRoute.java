@@ -4,33 +4,36 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.FilterProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 
 @Component
+@EnableConfigurationProperties({ ReturnURL.class })
 public class FileRoute extends RouteBuilder {
 
     private String path = "C:\\temp\\";
 
+    @Autowired
+    private ReturnURL returnURL;
+
+    private String status;
+    private static final String ROTA = "https://amzcad-core.hml.bancoamazonia.sa/monitoring/health";
+
     @Override
     public void configure() throws Exception {
         from("direct:start")
-                .setHeader(Exchange.HTTP_METHOD, constant(org.apache.camel.component.http.HttpMethods.POST))
-                .to("http://www.google.com")
-                .to("mock:results");
+                .setHeader(Exchange.HTTP_METHOD, constant("GET"))
+                .to(ROTA)
+                .to("bean:fileProcessor");
+
+        //.to("https://amzcad-core.hml.bancoamazonia.sa/monitoring/health")
 
     }
 }
 
-//alternativa para quando não se quer usar os BEANS e COMPONENTS, ai se faz dessa forma
-//class  FileProcessor implements Processor { //método que terá o objeto de intercâmbio que está passando na execução do fluxo do CONFIGURE
-//    @Override
-//    public void process(Exchange exchange) throws Exception {
-//        System.out.println("Processor: " + exchange.getIn().getBody()); //mostra o caminho do arquivo que está sendo consumindo
-//
-//    }
-//}
 
 @Component
 class FileComponent { //ELE EXIJE UM ÚNICO MÉTODO POR CLASSE, NÃO PODE TER MAIS DE UM
@@ -48,6 +51,15 @@ class FileProcessor implements Processor {
     }
 }
 
+
+//alternativa para quando não se quer usar os BEANS e COMPONENTS, ai se faz dessa forma
+//class  FileProcessor implements Processor { //método que terá o objeto de intercâmbio que está passando na execução do fluxo do CONFIGURE
+//    @Override
+//    public void process(Exchange exchange) throws Exception {
+//        System.out.println("Processor: " + exchange.getIn().getBody()); //mostra o caminho do arquivo que está sendo consumindo
+//
+//    }
+//}
 
 // ele irá ficar monitorando as pastas e arquivos enquanto a aplicação roda
 //        //com o delete=true ele não cria a pasta .camel que na verdade seria um backup
