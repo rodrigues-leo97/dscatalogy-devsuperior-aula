@@ -15,12 +15,10 @@ public class FileRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("file://" + path + "input?recursive=true&delete=true")
-                .choice() //para dizer que a partir do HEADER da mensagem do FILE eu posso tomar uma descisão
-                    .when(simple("${header.CamelFileLength < 422}")) //se o HEADER for menor doq 422 bytes eu envio para o BEAN
-                         .to("bean:fileComponent") //não preciso gerar um arquivo novo a partir do FROM, posso somente transmitir ele para o fileComponent
-        .otherwise() //caso não atenda a condição de cima
-                .process(new FileProcessor());
+        from("direct:start")
+                .setHeader(Exchange.HTTP_METHOD, constant(org.apache.camel.component.http.HttpMethods.POST))
+                .to("http://www.google.com")
+                .to("mock:results");
 
     }
 }

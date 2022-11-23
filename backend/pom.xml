@@ -83,6 +83,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-http</artifactId>
+			<version>3.19.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
