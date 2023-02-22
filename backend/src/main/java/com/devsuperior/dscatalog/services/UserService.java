@@ -28,9 +28,7 @@ import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
-
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
-
     @Autowired
     UserRepository repository;
 
