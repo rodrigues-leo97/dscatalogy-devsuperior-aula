@@ -18,12 +18,25 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 import java.util.Arrays;
 
+
 @Configuration
-@EnableAuthorizationServer //serve para realizar processamento informando que essa classe é quem representa o AuthorizationServe do OAuth
+@EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
+    @Value("${security.oauth2.client.client-id}")
+    private String clientId;
+
+    @Value("${security.oauth2.client.client-secret}")
+    private String clientSecret;
+
+    @Value("${jwt.duration}")
+    private Integer jwtDuration;
+
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtTokenEnhancer tokenEnhancer;
 
     @Autowired
     private JwtAccessTokenConverter accessTokenConverter;
@@ -34,19 +47,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    //com essa anotação ele pega o valor da variável que está definido no application.properties
-    @Value("${jwt.duration}")
-    private int jwtDuration;
-
-    @Value("${security.oauth2.client.client-id}")
-    private String clientId;
-
-    @Value("${security.oauth2.client.client-secret}")
-    private String clientSecret;
-
-    @Autowired
-    private JwtTokenEnhancer tokenEnhancer;
-
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
@@ -55,14 +55,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient(clientId) //esperando que diga o nome da aplicação(id dela), na aplicação ao acessar terá que informar o nome
-                .secret(bCryptPasswordEncoder.encode(clientSecret)) //para definir o clientSecret em hardcode mesmo
-                .scopes("read", "write") //para informar que é um acesso de leitura e escrita
-                .authorizedGrantTypes("password")//os tipos de acesso de login, nesse caso é password
-                .accessTokenValiditySeconds(jwtDuration); //para informar o tempo de expiração do token, no caso 24h
+                .withClient(clientId)
+                .secret(passwordEncoder.encode(clientSecret))
+                .scopes("read", "write")
+                .authorizedGrantTypes("password")
+                .accessTokenValiditySeconds(jwtDuration);
     }
 
-    //configuração para saber quem vai autorizar e qual o formato do token
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         TokenEnhancerChain chain = new TokenEnhancerChain();

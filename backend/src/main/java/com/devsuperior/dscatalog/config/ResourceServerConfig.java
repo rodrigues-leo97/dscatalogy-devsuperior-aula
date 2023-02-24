@@ -1,7 +1,11 @@
 package com.devsuperior.dscatalog.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,15 +13,23 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
+
 @Configuration
-@EnableResourceServer //processa para que a classe implemente a funcionalidade do ResourceServe
+@EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
+    @Value("${cors.origins}")
+    private String corsOrigins;
+
     @Autowired
-    private Environment env; //a partir dele dá pra acessar diversas variáveis
+    private Environment env;
 
     @Autowired
     private JwtTokenStore tokenStore;
@@ -29,18 +41,16 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     private static final String[] ADMIN = {"/users/**"}; //rotas liberadas somente para ADMIN
 
     @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception { //irá decodificar o token e ver se está tudo certo ou não, valida o token
-       //config do TOKEN STRORE
-        resources.tokenStore(tokenStore); //irá receber o bean tokenStore
+    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        resources.tokenStore(tokenStore);
     }
 
     @Override
-    public void configure(HttpSecurity http) throws Exception { //configuração das rotas e definir as configurações de acesso
+    public void configure(HttpSecurity http) throws Exception {
 
-        //para testar os profiles de execução que estou rodando (H2)
-        //vou converter isso para uma lista
-        if (Arrays.asList(env.getActiveProfiles()).contains("test")) { //se nos PROFILES ativos eu tenho um perfil de test
-            http.headers().frameOptions().disable(); //interface do h2 requer que desabilite essas questões de proteger os frames para que ela pegue
+        // H2
+        if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
+            http.headers().frameOptions().disable();
         }
 
         http.authorizeRequests()
@@ -50,5 +60,30 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(ADMIN).hasRole("ADMIN") //só pode acessar essas rotas quem tiver a role ADMIN
                 .anyRequest().authenticated(); //qualquer outra rota não específicada ela irá cobrar autenticação pq aqui está configurado para isso, ou seja, tem que estar logado indepedente do perfil de usuário
 
+        http.cors().configurationSource(corsConfigurationSource());
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() { //CORS - serve para liberar que o backend possa ser acessado por outros HOSTS
+
+        String[] origins = corsOrigins.split(",");
+
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedOriginPatterns(Arrays.asList(origins));
+        corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
+        corsConfig.setAllowCredentials(true);
+        corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+        return source;
+    }
+
+    @Bean
+    FilterRegistrationBean<CorsFilter> corsFilter() {
+        FilterRegistrationBean<CorsFilter> bean
+                = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
     }
 }
